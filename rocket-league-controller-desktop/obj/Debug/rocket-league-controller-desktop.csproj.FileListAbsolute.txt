@@ -1,0 +1,7 @@
+C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\rocket-league-controller-desktop\bin\Debug\rocket-league-controller-desktop.exe.config
+C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\rocket-league-controller-desktop\bin\Debug\rocket-league-controller-desktop.exe
+C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\rocket-league-controller-desktop\bin\Debug\rocket-league-controller-desktop.pdb
+C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\rocket-league-controller-desktop\bin\Debug\vJoyInterfaceWrap.dll
+C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\rocket-league-controller-desktop\obj\Debug\rocket-league-controller-desktop.csprojResolveAssemblyReference.cache
+C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\rocket-league-controller-desktop\obj\Debug\rocket-league-controller-desktop.exe
+C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\rocket-league-controller-desktop\obj\Debug\rocket-league-controller-desktop.pdb
