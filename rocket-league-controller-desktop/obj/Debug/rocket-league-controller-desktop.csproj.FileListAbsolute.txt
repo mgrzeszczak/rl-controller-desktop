@@ -5,3 +5,5 @@ C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\
 C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\rocket-league-controller-desktop\obj\Debug\rocket-league-controller-desktop.csprojResolveAssemblyReference.cache
 C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\rocket-league-controller-desktop\obj\Debug\rocket-league-controller-desktop.exe
 C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\rocket-league-controller-desktop\obj\Debug\rocket-league-controller-desktop.pdb
+C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\rocket-league-controller-desktop\obj\Debug\rlc_gui.Window.resources
+C:\Users\Maciej\Desktop\PROJECTS\VISUAL STUDIO\rocket-league-controller-desktop\rocket-league-controller-desktop\obj\Debug\rocket-league-controller-desktop.csproj.GenerateResource.Cache

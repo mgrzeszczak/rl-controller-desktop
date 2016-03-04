@@ -1,32 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using rlController;
+using System.Reflection;
 
-using vJoyInterfaceWrap;
-
-namespace rlController
+namespace rlc_gui
 {
-    class Program
+    static class Program
     {
-        public const uint ID = 1;
-
-        public static void Main(string[] args)
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
         {
-            try {
-                Controller controller = new Controller(ID);
-
-                while (true) { 
-                    Server server = new Server();
-                    server.onMessage += controller.onMessage;
-                    server.connect();
-                }
-
-            } catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Window());
         }
     }
 }

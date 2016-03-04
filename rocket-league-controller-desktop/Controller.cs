@@ -25,29 +25,29 @@ namespace rlController
             iReport = new vJoy.JoystickState();
 
             // Device ID can only be in the range 1-16
-            if (id <= 0 || id > 16) err(String.Format("Illegal device ID {0}\nExit!", id));
+            if (id <= 0 || id > 16) err(String.Format("Illegal device ID {0} (1-16)", id));
 
             // Get the driver attributes (Vendor ID, Product ID, Version Number)
-            if (!joystick.vJoyEnabled()) err("vJoy driver not enabled: Failed Getting vJoy attributes.\n");
+            if (!joystick.vJoyEnabled()) err("vJoy driver not enabled: Failed Getting vJoy attributes.");
             else Console.WriteLine("Vendor: {0}\nProduct :{1}\nVersion Number:{2}\n", joystick.GetvJoyManufacturerString(), 
                     joystick.GetvJoyProductString(), joystick.GetvJoySerialNumberString());
             VjdStat status = joystick.GetVJDStatus(id);
             switch (status)
             {
                 case VjdStat.VJD_STAT_OWN:
-                    Console.WriteLine("vJoy Device {0} is already owned by this feeder", id);
+                    Console.WriteLine("vJoy Device {0} is already owned by this feeder.", id);
                     break;
                 case VjdStat.VJD_STAT_FREE:
-                    Console.WriteLine("vJoy Device {0} is free", id);
+                    Console.WriteLine("vJoy Device {0} is free.", id);
                     break;
                 case VjdStat.VJD_STAT_BUSY:
-                    err(String.Format("vJoy Device {0} is already owned by another feeder\nCannot continue", id));
+                    err(String.Format("vJoy Device {0} is already owned by another feeder.", id));
                     return;
                 case VjdStat.VJD_STAT_MISS:
-                    err(String.Format("vJoy Device {0} is not installed or disabled\nCannot continue", id));
+                    err(String.Format("vJoy Device {0} is not installed or disabled.", id));
                     return;
                 default:
-                    err(String.Format("vJoy Device {0} general error\nCannot continue", id));
+                    err(String.Format("vJoy Device {0} general error.", id));
                     return;
             };
             // Check which axes are supported
@@ -61,7 +61,7 @@ namespace rlController
             int ContPovNumber = joystick.GetVJDContPovNumber(id);
             int DiscPovNumber = joystick.GetVJDDiscPovNumber(id);
             // Print results
-            Console.WriteLine("\nvJoy Device {0} capabilities:", id);
+            /*Console.WriteLine("\nvJoy Device {0} capabilities:", id);
             Console.WriteLine("Numner of buttons\t\t{0}", nButtons);
             Console.WriteLine("Numner of Continuous POVs\t{0}", ContPovNumber);
             Console.WriteLine("Numner of Descrete POVs\t\t{0}", DiscPovNumber);
@@ -69,23 +69,40 @@ namespace rlController
             Console.WriteLine("Axis Y\t\t{0}", AxisX ? "Yes" : "No");
             Console.WriteLine("Axis Z\t\t{0}", AxisX ? "Yes" : "No");
             Console.WriteLine("Axis Rx\t\t{0}", AxisRX ? "Yes" : "No");
-            Console.WriteLine("Axis Rz\t\t{0}", AxisRZ ? "Yes" : "No");
+            Console.WriteLine("Axis Rz\t\t{0}", AxisRZ ? "Yes" : "No");*/
             // Test if DLL matches the driver
             UInt32 DllVer = 0, DrvVer = 0;
             bool match = joystick.DriverMatch(ref DllVer, ref DrvVer);
             if (match)
-                Console.WriteLine("Version of Driver Matches DLL Version ({0:X})\n", DllVer);
+                Console.WriteLine("Version of Driver Matches DLL Version ({0:X})", DllVer);
             else
-                Console.WriteLine("Version of Driver ({0:X}) does NOT match DLL Version ({1:X})\n", DrvVer, DllVer);
+                Console.WriteLine("Version of Driver ({0:X}) does NOT match DLL Version ({1:X})", DrvVer, DllVer);
             // Acquire the target
             if ((status == VjdStat.VJD_STAT_OWN) || ((status == VjdStat.VJD_STAT_FREE) && (!joystick.AcquireVJD(id))))
             {
-                err(String.Format("Failed to acquire vJoy device number {0}.\n", id));
+                err(String.Format("Failed to acquire vJoy device number {0}.", id));
                 return;
             }
-            else Console.WriteLine("Acquired: vJoy device number {0}.\n", id);
+            else Console.WriteLine("Acquired: vJoy device number {0}.", id);
 
             initAxes();
+        }
+
+        public void relinquish()
+        {
+            initAxes();
+            joystick.RelinquishVJD(id);
+        }
+
+        private void defaultValues()
+        {
+            initAxes();
+            initButtons();
+        }
+
+        private void initButtons()
+        {
+            joystick.ResetButtons(id);
         }
 
         private void initAxes()
@@ -112,36 +129,58 @@ namespace rlController
         }
         private void useButton(uint button, bool value)
         {
+            Console.WriteLine("Using button {0} - {1}", button, value);
             joystick.SetBtn(value, id, button);
         }
+        private int counter = 0;
+
         public void onMessage(int type, byte[] content)
         {
+            //Console.WriteLine("On message: type = {0}", type);
+            int msg;
             switch (type)
             {
                 case MessageType.L_AXIS_X:
                     setAxis(HID_USAGES.HID_USAGE_X, BitConverter.ToInt32(content, 0));
                     break;
-                case MessageType.L_AXIS_Y:
-                    break;
                 case MessageType.DRIVE:
                     setAxis(HID_USAGES.HID_USAGE_RZ, BitConverter.ToInt32(content, 0));
-                    setAxis(HID_USAGES.HID_USAGE_Y, 32767-BitConverter.ToInt32(content, 0));
+                    int realVal = 32767 - BitConverter.ToInt32(content, 0);
+                    //int normalized = 16384 + (int)(10000*((realVal - 16384.0) / 16384.0));
+                    setAxis(HID_USAGES.HID_USAGE_Y, realVal);
                     break;
                 case MessageType.BOOST:
                     int boost = BitConverter.ToInt32(content, 0);
-                    Boolean bboost = boost == 1 ? true : false;
-                    //Console.WriteLine("BOOST " + bboost);
+                    bool bboost = boost == 1 ? true : false;
                     useButton(2, bboost);
                     break;
                 case MessageType.JUMP:
                     int jump = BitConverter.ToInt32(content, 0);
-                    Boolean bjump = jump == 1 ? true : false;
+                    bool bjump = jump == 1 ? true : false;
+                    counter++;
+                    Console.WriteLine("{0} - jump -> {1}", counter, bjump);
                     useButton(1, bjump);
+                    break;
+                case MessageType.CONTROL_LOCK:
+                    defaultValues();
+                    break;
+                case MessageType.START:
+                    Console.WriteLine("START PRESSED");
+                    msg = BitConverter.ToInt32(content, 0);
+                    useButton(8, msg==1);
+                    break;
+                case MessageType.DRIFT:
+                    msg = BitConverter.ToInt32(content, 0);
+                    useButton(3, msg == 1);
+                    break;
+                case MessageType.CAMERA:
+                    msg = BitConverter.ToInt32(content, 0);
+                    useButton(4, msg == 1);
                     break;
             }
         }
         
-        public void err(string message)
+        private void err(string message)
         {
             throw new ControllerException(message);
         }
@@ -149,7 +188,7 @@ namespace rlController
 
     public class ControllerException : Exception
     {
-        public ControllerException(string message) : base("Controller exception\n"+message)
+        public ControllerException(string message) : base(message)
         {
             
         }
